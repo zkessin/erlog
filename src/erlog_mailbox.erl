@@ -8,3 +8,12 @@
 send(Pid, Msg) ->
     Pid ! Msg,
     {succeed_last,Msg}.
+
+receive_msg(Timeout) ->
+    receive
+	Msg ->
+	    {succeed_last, Msg}
+    after Timeout ->
+	    fail
+    end.
+
