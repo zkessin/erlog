@@ -33,7 +33,11 @@ prop_recieve() ->
 		
 		{{succeed, R}, _ERLOG2}	= erlog:prove(ERLOG1, {'receive', {'Msg'}, 500}),
 		Msg =:= proplists:get_value('Msg', R)
-
 	    end).
-			     
+
+recieve_after_test() ->			     
+    {ok, ERLOG1}                    = make_erlog(),
+    ?assertMatch({fail, _}, erlog:prove(ERLOG1, {'receive', {'Msg'}, 5})),
+    true.
+	    
 
