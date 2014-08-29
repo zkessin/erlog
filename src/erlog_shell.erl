@@ -46,7 +46,7 @@ server_loop(St0) ->
 		{ok,St1} ->
 		    io:fwrite("Yes\n"),
 		    server_loop(St1);
-		{erlog_error,Error} ->
+		{error,  Error} ->
 		    io:fwrite("Error: ~p\n", [Error]),
 		    server_loop(St0);
 		{error,{L,Pm,Pe}} ->
@@ -58,7 +58,7 @@ server_loop(St0) ->
 	    end;
 	{ok,{load,Mod}} ->
 	    case erlog:load(St0, Mod) of
-		{ok,St1} -> show_bindings([], St1);
+		{ok, St1} -> show_bindings([], St1);
 		{error,Error} ->
 		    io:fwrite("Error: ~p\n", [Error]),
 		    server_loop(St0)
