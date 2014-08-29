@@ -15,13 +15,15 @@ person() ->
 	    address	= list(char()),
 	    comments	= binary()}.
 
+get_erlang_file() ->
+    code:lib_dir(erlog) ++"/stdlib/erlang.pl".
 
 prop_prolog_records_get() ->
     ?FORALL(Person,
 	    person(),
 	    begin
                 {ok,E}					= erlog:new(),
-                {ok, E1}                                = erlog:consult(E,"../stdlib/erlang.pl"),
+                {ok, E1}                                = erlog:consult(E,get_erlang_file()),
                 Fields                                  = record_info(fields, person),
                 {{succeed,_}, E2}                       = erlog:prove(E1, {record, person, Fields}),
 
@@ -42,7 +44,7 @@ prop_prolog_records_set() ->
 	    {person(),name()},
 	    begin
                 {ok,E} = erlog:new(),
-                {ok, E1}                                = erlog:consult(E,"../stdlib/erlang.pl"),
+                {ok, E1}                                = erlog:consult(E,get_erlang_file()),
                 Fields                                  = record_info(fields, person),
                 {{succeed,_}, E2}                       = erlog:prove(E1,{record, person, Fields}),
 

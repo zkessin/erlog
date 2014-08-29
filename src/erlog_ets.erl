@@ -20,7 +20,7 @@
 
 -include("erlog_int.hrl").
 
--compile(export_all).
+%-compile(export_all).
 
 -export([load/1,all_1/6,keys_2/6,match_2/6]).
 

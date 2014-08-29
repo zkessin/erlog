@@ -1,5 +1,6 @@
 -include("../src/erlog_int.hrl").
 
+
 get_quickcheck_properties() ->
     Funs  = ?MODULE:module_info(functions),
     Funs1 = [P || {P, 0} <- Funs],
@@ -25,11 +26,11 @@ run_quickcheck(Tests, _Count) ->
 	 end  || Prop<-Tests]
     end.
 
+out(P) ->
+   on_output(fun(S,F) -> io:format(user, S, F) end,P).
 
 
 
 
 %--------------------------------------------------------------------------------
 
-out(P) ->
-   on_output(fun(S,F) -> io:format(user, S, F) end,P).
