@@ -49,7 +49,7 @@ server_loop(St0) ->
 		{error,  Error} ->
 		    io:fwrite("Error: ~p\n", [Error]),
 		    server_loop(St0);
-		{error,{L,Pm,Pe}} ->
+		{erlog_error,{L,Pm,Pe}} ->
 		    io:fwrite("Error: ~w: ~s\n", [L,Pm:format_error(Pe)]),
 		    server_loop(St0);
 		{error,Error} ->
