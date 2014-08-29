@@ -12,13 +12,12 @@ install:
 
 
 script:
-  - rebar get-deps
-  - rebar compile 
-  - rebar eunit
+  - make compile 
+  - make tests
   - |
      if [ $TRAVIS_OTP_RELEASE == 17.1 ] 
         then
-          make dialyzer 
+          make plt dialyze
         else 
          true
      fi
