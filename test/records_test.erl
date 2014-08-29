@@ -17,11 +17,13 @@ person() ->
 
 
 prop_prolog_records_get() ->
+    application:set_env(erlog, consult_path, [".", "../stdlib"]),
     ?FORALL(Person,
 	    person(),
 	    begin
+
                 {ok,E}					= erlog:new(),
-                {ok, E1}                                = erlog:consult(E,"../priv/records.pl"),
+                {ok, E1}                                = erlog:consult(E,"erlang.pl"),
                 Fields                                  = record_info(fields, person),
                 {{succeed,_}, E2}                       = erlog:prove(E1, {record, person, Fields}),
 
@@ -38,11 +40,13 @@ prop_prolog_records_get() ->
 	    end).
  
 prop_prolog_records_set() ->
+    application:set_env(erlog, consult_path, [".", "../stdlib"]),
     ?FORALL({Person,NewName},
 	    {person(),name()},
 	    begin
                 {ok,E} = erlog:new(),
-                {ok, E1}                                = erlog:consult(E,"../priv/records.pl"),
+                {ok, E1}                                = erlog:consult(E,"erlang.pl"),
+
                 Fields                                  = record_info(fields, person),
                 {{succeed,_}, E2}                       = erlog:prove(E1,{record, person, Fields}),
 
