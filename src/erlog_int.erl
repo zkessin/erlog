@@ -213,7 +213,8 @@ built_in_db(Db0) ->
 		 {ecall,2},
 		 %% Non-standard but useful
 		 {display,1},
-		 {display,2}
+		 {display,2},
+		 {nl,0}
 		]),
     Db1.
 
@@ -360,6 +361,11 @@ prove_goal({display,T}, Next, Cps, Bs, Vn, Db) ->
     %% A very simple display procedure.
     io:fwrite("~p\n", [dderef(T, Bs)]),
     prove_body(Next, Cps, Bs, Vn, Db);
+prove_goal(nl, Next, Cps, Bs, Vn, Db) ->
+    %% A very simple display procedure.
+    io:fwrite("\n", []),
+    prove_body(Next, Cps, Bs, Vn, Db);
+
 %% Now look up the database.
 prove_goal(G, Next, Cps, Bs, Vn, Db) ->
     %%io:fwrite("PG: ~p\n    ~p\n    ~p\n", [dderef(G, Bs),Next,Cps]),

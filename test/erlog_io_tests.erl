@@ -37,6 +37,21 @@ prop_display_1() ->
 		end
 	    end).
 
+nl_test() ->
+    Leader      = self(),
+    {ok, Erlog} = erlog:new(),
+    Pid = spawn_link(fun() ->
+			     erlang:group_leader(Leader, self()),
+			     erlog:prove(Erlog, nl),
+			     ok
+		     end),
+    receive
+	{io_request,Pid,_,{put_chars, unicode, io_lib, format, ["\n",[]]}} ->
+	    true
+    after 50 ->
+	    error("no message")
+    end.
+
 prop_display_2() ->
     ?FORALL({Format,Value},
 	    oneof([{"~p",int()},
