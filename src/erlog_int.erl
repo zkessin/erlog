@@ -212,7 +212,8 @@ built_in_db(Db0) ->
 		 %% External interface
 		 {ecall,2},
 		 %% Non-standard but useful
-		 {display,1}
+		 {display,1},
+		 {display,2}
 		]),
     Db1.
 
@@ -351,6 +352,10 @@ prove_goal({ecall,C0,Val}, Next, Cps, Bs, Vn, Db) ->
 	   end,
     prove_ecall(Efun, Val, Next, Cps, Bs, Vn, Db);
 %% Non-standard but useful.
+prove_goal({display, Format, T}, Next, Cps, Bs, Vn, Db) ->
+    io:fwrite(dderef(Format, Bs), [dderef(T, Bs)]),
+    prove_body(Next, Cps, Bs, Vn, Db);
+
 prove_goal({display,T}, Next, Cps, Bs, Vn, Db) ->
     %% A very simple display procedure.
     io:fwrite("~p\n", [dderef(T, Bs)]),
