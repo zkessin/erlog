@@ -26,9 +26,9 @@ prop_equal() ->
 	    begin
 		{ok,E}   = erlog:new(),
 	        case erlog:prove(E, {'==',I,J}) of
-		    {fail,#est{}} ->
+		    {fail,_} ->
 			I =/= J;
-		    {{succeed,[]},#est{}} ->
+		    {{succeed,[]},_} ->
 			I == J
 		end
 	    end).
@@ -48,7 +48,7 @@ prop_not_equal() ->
 
 fail_test() ->
     {ok, ERLOG}   = erlog:new(),
-    {fail,#est{}} = erlog:prove(ERLOG, fail),
+    {fail,_}      = erlog:prove(ERLOG, fail),
     true.
 
 
@@ -97,7 +97,7 @@ prop_assert() ->
                 {ok, ERLOG}   = erlog:new(),
                 {{succeed,_},ERLOG1} = erlog:prove(ERLOG, {Op, Value}),
                 case  erlog:prove(ERLOG1, Value) of
-                    {{succeed,_},#est{}} -> true;
+                    {{succeed,_},_} -> true;
                     _           -> false
                 end
             end).
@@ -111,8 +111,8 @@ prop_retract() ->
                 {{succeed,_}, ERLOG2}	= erlog:prove(ERLOG1, Value),
                 {{succeed,_}, ERLOG3}	= erlog:prove(ERLOG2, {Op, Value}),
                 case  erlog:prove(ERLOG3, Value) of
-                    {{succeed,_},#est{}}  -> false;
-                    {fail, #est{}}        -> true
+                    {{succeed,_},_}  -> false;
+                    {fail, _}        -> true
                 end
             end).
               

@@ -30,6 +30,8 @@ consult_with_file_test()->
     {ok, ERLOG}  = erlog:new(),
     {ok, ERLOG1} =  erlog:consult(ERLOG,    "graph.pl"),
     {ok, ERLOG2} =  erlog:reconsult(ERLOG1, "graph.pl"),
-    ?assert(is_record(ERLOG2,est)),
+
+    ?assertMatch({erlog, [], #est{}}, ERLOG2),
+%    ?assert(is_record(ERLOG2,erlog)),
     true.
     

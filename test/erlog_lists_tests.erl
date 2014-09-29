@@ -27,7 +27,7 @@ prop_append_lists() ->
            Term      = {append,A,B,{'Z'}},
            {ok,E}         = erlog:new(),
            case  erlog:prove(E,Term) of
-               {{succeed, [{'Z', Z}]},E1} when is_record(E1, est) ->
+               {{succeed, [{'Z', Z}]},_}  ->
                    Z =:= lists:append(A,B);
                fail ->
                    false
@@ -44,7 +44,7 @@ prop_append_list() ->
            {ok,E}    = erlog:new(),
            case  erlog:prove(E,Term) of
                {{succeed, [{'A', A}, 
-                          {'B', B}]},E1} when is_record(E1,est) ->
+                          {'B', B}]},_} ->
                    L =:= lists:append(A,B);
                fail ->
                    false

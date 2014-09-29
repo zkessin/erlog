@@ -110,9 +110,9 @@ prop_comp() ->
 	    begin
                 {ok, ERLOG}    = erlog:new(),
                 case erlog:prove(ERLOG, {Op, I, J}) of
-		    {{succeed, _},#est{}} -> 
+		    {{succeed, _},_ } -> 
 			C(I,J);
-		    {fail,#est{}} ->
+		    {fail, _} ->
 			not(C(I,J))
 		    end
 		end).
@@ -142,7 +142,7 @@ prop_float()->
     ?FORALL(I,real(),
             begin
                 {ok, ERLOG}    = erlog:new(),
-                {{succeed, _},#est{}} = erlog:prove(ERLOG, {float, I}),
+                {{succeed, _},_} = erlog:prove(ERLOG, {float, I}),
                 true
             end).
 
@@ -150,14 +150,14 @@ prop_integer()->
     ?FORALL(I,int(),
             begin
                 {ok, ERLOG}    = erlog:new(),
-                {{succeed, _},#est{}} = erlog:prove(ERLOG, {integer, I}),
+                {{succeed, _},_} = erlog:prove(ERLOG, {integer, I}),
                 true
             end).
 prop_number()->
     ?FORALL(I,oneof([int(),real()]),
             begin
                 {ok, ERLOG}    = erlog:new(),
-                {{succeed, _},#est{}} = erlog:prove(ERLOG, {number, I}),
+                {{succeed, _},_} = erlog:prove(ERLOG, {number, I}),
                 true
             end).
 
@@ -181,10 +181,10 @@ prop_arg() ->
 clause_test() ->
     {ok,E}		= erlog:new(),
     {ok, E1}            = erlog:consult(E,"../stdlib/erlang.pl"),
-    {{succeed, A1},E2}	= erlog:prove(E1, {clause, {record, {'X'},{'Y'}}, {'Z'}}),
-    {{succeed, A2},_E3} = erlog:next_solution(E2),
+    {{succeed, A1},_E2}	= erlog:prove(E1, {clause, {record, {'X'},{'Y'}}, {'Z'}}),
+%    {{succeed, A2},_}   = erlog:next_solution(E2),
     ?assertEqual(3,length(A1)),
-    ?assertEqual(3,length(A2)),
+ %   ?assertEqual(3,length(A2)),
     ?assertEqual('!', proplists:get_value('Z', A1)),
    % ?assertMatch({record,{_},{_},1}, proplists:get_value('Z',A2)),
     true.

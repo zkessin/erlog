@@ -20,15 +20,15 @@
 
 
 partially_ordered_set_test() ->
-    {ok, ERLOG}   =                               erlog:new(),
-    {ok, ERLOG1 }         =                        erlog:consult(ERLOG, "../test/po_set.pl"),    
-    ?assertMatch({{succeed, []},#est{}},                 erlog:prove(ERLOG1, {connected, a, b})),
-    ?assertMatch({fail,#est{}},                          erlog:prove(ERLOG1, {connected, b,c})),
-    ?assertMatch({{succeed, []},#est{}},                 erlog:prove(ERLOG1, {ancestor, a, f})),
-    ?assertMatch({{succeed, [{'Ancestor', d}]},#est{}},  erlog:prove(ERLOG1, {ancestor, {'Ancestor'}, f})),
- %   ?assertMatch({{succeed, [{'Ancestor', b}]},#est{}},  erlog:next_solution(ERLOG2)),
-    ?assertMatch({{succeed, [{'p', [a,b,f]}]}, #est{}},  erlog:prove(ERLOG1,{path, a, f, {p}})),
-%    ?assertMatch({{succeed, [{'p', [a,c,d,f]}]}, #est{}},erlog:next_solution(ERLOG3)),
+    {ok, ERLOG}   =                                        erlog:new(),
+    {ok, ERLOG1 }         =                                erlog:consult(ERLOG, "../test/po_set.pl"),    
+    ?assertMatch({{succeed, []}, _},                       erlog:prove(ERLOG1, {connected, a, b})),
+    ?assertMatch({fail,_ },                                erlog:prove(ERLOG1, {connected, b,c})),
+    ?assertMatch({{succeed, []},_ },                       erlog:prove(ERLOG1, {ancestor, a, f})),
+    ?assertMatch({{succeed, [{'Ancestor', d}]},_},         erlog:prove(ERLOG1, {ancestor, {'Ancestor'}, f})),
+ %   ?assertMatch({{succeed, [{'Ancestor', b}]},#est{}},   erlog:next_solution(ERLOG2)),
+    ?assertMatch({{succeed, [{'p', [a,b,f]}]}, _},         erlog:prove(ERLOG1,{path, a, f, {p}})),
+%    ?assertMatch({{succeed, [{'p', [a,c,d,f]}]}, #est{}}, erlog:next_solution(ERLOG3)),
     true.
 
 gnode() ->

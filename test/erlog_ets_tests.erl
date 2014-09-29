@@ -32,8 +32,8 @@ erlog_empty_ets_test() ->
     {ok, ERLOG}		= erlog:new(),
     {ok, ERLOG1}	= erlog:load(ERLOG,erlog_ets),
     TabId		= ets:new(test_ets_table, [bag, {keypos,2}]),
-    {fail,#est{}}	= erlog:prove(ERLOG1, {ets_keys, TabId, {'S'}}),
-    {fail,#est{}}	= erlog:prove(ERLOG1, {ets_match, TabId,{'S'}}),
+    {fail,_}	        = erlog:prove(ERLOG1, {ets_keys, TabId, {'S'}}),
+    {fail,_}	        = erlog:prove(ERLOG1, {ets_match, TabId,{'S'}}),
     true.
 
     
@@ -53,7 +53,7 @@ prop_ets_keys() ->
 		TabId = ets:new(test_ets_table, [bag, {keypos,2}]),
 		ets:insert(TabId, Nodes),
 		lists:all(fun({edge,S,_E})->
-				  {{succeed, []},#est{}} = erlog:prove(ERLOG1, {ets_keys, TabId, S}),
+				  {{succeed, []},_} = erlog:prove(ERLOG1, {ets_keys, TabId, S}),
 				  true
 			  end, Nodes)
 		end).
@@ -69,7 +69,7 @@ prop_ets_match_all() ->
 		ets:insert(TabId, Nodes),
 
 		true = lists:all(fun(Edge = {edge,_,_})->
-					 {{succeed, []},#est{}}  = erlog:prove(ERLOG1, {ets_match, TabId, Edge}),
+					 {{succeed, []},_}  = erlog:prove(ERLOG1, {ets_match, TabId, Edge}),
 					 true
 			  end, Nodes)
 		end).
@@ -79,12 +79,12 @@ prop_ets_match() ->
             {gnodes()},
             begin
                 {ok, ERLOG}   = erlog:new(),
-		{ok, ERLOG1} = erlog:load(ERLOG,erlog_ets),
-		TabId = ets:new(test_ets_table, [bag]),
+		{ok, ERLOG1}  = erlog:load(ERLOG,erlog_ets),
+		TabId         = ets:new(test_ets_table, [bag]),
 		ets:insert(TabId, Nodes),
 
                 case  erlog:prove(ERLOG1, {ets_match, TabId, {'X'}}) of
-                    {{succeed,[{'X', M}]},#est{}} -> 
+                    {{succeed,[{'X', M}]},_} -> 
 			lists:member(M,Nodes);
                     _R           -> 
 			false
