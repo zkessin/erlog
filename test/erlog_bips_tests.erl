@@ -181,8 +181,8 @@ prop_arg() ->
 clause_test() ->
     {ok,E}		= erlog:new(),
     {ok, E1}            = erlog:consult(E,"../stdlib/erlang.pl"),
-    {{succeed, A1},_E2}	= erlog:prove(E1, {clause, {record, {'X'},{'Y'}}, {'Z'}}),
-%    {{succeed, A2},_}   = erlog:next_solution(E2),
+    {{succeed, A1},E2}	= erlog:prove(E1, {clause, {record, {'X'},{'Y'}}, {'Z'}}),
+  %  {{succeed, _A2},_}   = erlog:next_solution(E2),
     ?assertEqual(3,length(A1)),
  %   ?assertEqual(3,length(A2)),
     ?assertEqual('!', proplists:get_value('Z', A1)),
