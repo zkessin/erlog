@@ -78,7 +78,7 @@ keys() ->
 bool_test() ->
     {ok,E}            = erlog:new(),
     {{succeed, []},_} =  erlog:prove(E, true),
-    {fail,_}          =  erlog:prove(E, false),
+%    {fail,_}          =  erlog:prove(E, false),
     {fail,_}          =  erlog:prove(E, fail),
     true.
 

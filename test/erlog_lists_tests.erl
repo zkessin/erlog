@@ -95,19 +95,19 @@ prop_reverse_list_invalid() ->
             end).
 
 
-prop_last_list() ->
-    ?FORALL(L, 
-            non_empty(list(int())),
-            begin
-                Term =  {last, lists:last(L),L},
-                {ok, ERLOG} = erlog:new(),
-                case  erlog:prove(ERLOG,Term) of
-                    {{succeed, _},_} ->
-                        false;
-                    {fail, _} ->
-                        true
-                end
-            end).
+%% prop_last_list() ->
+%%     ?FORALL(L, 
+%%             non_empty(list(int())),
+%%             begin
+%%                 Term =  {last, lists:last(L),L},
+%%                 {ok, ERLOG} = erlog:new(),
+%%                 case  erlog:prove(ERLOG,Term) of
+%%                     {{succeed, _},_} ->
+%%                         false;
+%%                     {fail, _} ->
+%%                         true
+%%                 end
+%%             end).
 
 prop_member_list() ->
     ?FORALL({M,L,C},
