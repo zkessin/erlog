@@ -30,10 +30,10 @@
 
 erlog_empty_ets_test() ->
     {ok, ERLOG}		= erlog:new(),
-    {ok, ERLOG1}	= erlog:load(ERLOG,erlog_ets),
+    {ok, ERLOG1}	= erlog:load(erlog_ets,ERLOG),
     TabId		= ets:new(test_ets_table, [bag, {keypos,2}]),
-    {fail,_}	        = erlog:prove(ERLOG1, {ets_keys, TabId, {'S'}}),
-    {fail,_}	        = erlog:prove(ERLOG1, {ets_match, TabId,{'S'}}),
+    {fail,_}	        = erlog:prove( {ets_keys, TabId,{'S'}},ERLOG1),
+    {fail,_}	        = erlog:prove({ets_match, TabId,{'S'}},ERLOG1),
     true.
 
     
@@ -49,11 +49,11 @@ prop_ets_keys() ->
             {gnodes()},
             begin
                 {ok, ERLOG}   = erlog:new(),
-		{ok, ERLOG1}  = erlog:load(ERLOG,erlog_ets),
+		{ok, ERLOG1}  = erlog:load(erlog_ets,ERLOG),
 		TabId = ets:new(test_ets_table, [bag, {keypos,2}]),
 		ets:insert(TabId, Nodes),
 		lists:all(fun({edge,S,_E})->
-				  {{succeed, []},_} = erlog:prove(ERLOG1, {ets_keys, TabId, S}),
+				  {{succeed, []},_} = erlog:prove({ets_keys, TabId, S},ERLOG1),
 				  true
 			  end, Nodes)
 		end).
@@ -64,12 +64,12 @@ prop_ets_match_all() ->
             {gnodes()},
             begin
                 {ok, ERLOG}   = erlog:new(),
-		{ok, ERLOG1} = erlog:load(ERLOG,erlog_ets),
+		{ok, ERLOG1} = erlog:load(erlog_ets,ERLOG),
 		TabId = ets:new(test_ets_table, [bag]),
 		ets:insert(TabId, Nodes),
 
 		true = lists:all(fun(Edge = {edge,_,_})->
-					 {{succeed, []},_}  = erlog:prove(ERLOG1, {ets_match, TabId, Edge}),
+					 {{succeed, []},_}  = erlog:prove({ets_match, TabId, Edge},ERLOG1),
 					 true
 			  end, Nodes)
 		end).
@@ -79,11 +79,11 @@ prop_ets_match() ->
             {gnodes()},
             begin
                 {ok, ERLOG}   = erlog:new(),
-		{ok, ERLOG1}  = erlog:load(ERLOG,erlog_ets),
+		{ok, ERLOG1}  = erlog:load(erlog_ets,ERLOG),
 		TabId         = ets:new(test_ets_table, [bag]),
 		ets:insert(TabId, Nodes),
 
-                case  erlog:prove(ERLOG1, {ets_match, TabId, {'X'}}) of
+                case  erlog:prove( {ets_match, TabId, {'X'}},ERLOG1) of
                     {{succeed,[{'X', M}]},_} -> 
 			lists:member(M,Nodes);
                     _R           -> 

@@ -21,15 +21,15 @@
 
 consult_no_file_test() ->
     {ok, ERLOG}    = erlog:new(),
-    ?assertMatch({error,enoent}, erlog:consult(ERLOG,   "no_file.pl")),
-    ?assertMatch({error,enoent}, erlog:reconsult(ERLOG, "no_file.pl")),
+    ?assertMatch({error,enoent}, erlog:consult(   "no_file.pl",ERLOG)),
+    ?assertMatch({error,enoent}, erlog:reconsult( "no_file.pl",ERLOG)),
     true.
 
 consult_with_file_test()->
     application:set_env(erlog, consult_path, [".", "../stdlib", "../priv", "../test"]),
     {ok, ERLOG}  = erlog:new(),
-    {ok, ERLOG1} =  erlog:consult(ERLOG,    "graph.pl"),
-    {ok, ERLOG2} =  erlog:reconsult(ERLOG1, "graph.pl"),
+    {ok, ERLOG1} =  erlog:consult(   "graph.pl",ERLOG),
+    {ok, ERLOG2} =  erlog:reconsult( "graph.pl",ERLOG1),
 
     ?assertMatch({erlog, [], #est{}}, ERLOG2),
 %    ?assert(is_record(ERLOG2,erlog)),

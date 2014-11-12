@@ -26,7 +26,7 @@ prop_append_lists() ->
        begin
            Term      = {append,A,B,{'Z'}},
            {ok,E}         = erlog:new(),
-           case  erlog:prove(E,Term) of
+           case  erlog:prove(Term,E) of
                {{succeed, [{'Z', Z}]},_}  ->
                    Z =:= lists:append(A,B);
                fail ->
@@ -42,7 +42,7 @@ prop_append_list() ->
        begin
            Term = {append,{'A'},{'B'},L},
            {ok,E}    = erlog:new(),
-           case  erlog:prove(E,Term) of
+           case  erlog:prove(Term,E) of
                {{succeed, [{'A', A}, 
                           {'B', B}]},_} ->
                    L =:= lists:append(A,B);
@@ -57,7 +57,7 @@ prop_reverse_list() ->
             begin
                 Term      =  {reverse,L,{'Y'}},
                 {ok,E }        = erlog:new(),
-                case  erlog:prove(E,Term) of
+                case  erlog:prove(Term,E) of
                     {{succeed, [{'Y', Y}]},_E1} ->
                         L =:= lists:reverse(Y);
                     fail ->
@@ -72,7 +72,7 @@ prop_reverse_list_valid() ->
             begin
                 Term =  {reverse,L,lists:reverse(L)},
                 {ok, E} = erlog:new(),
-                case  erlog:prove(E,Term) of
+                case  erlog:prove(Term,E) of
                     {{succeed, _},_} ->
                         true;
                     {fail,_} ->
@@ -86,7 +86,7 @@ prop_reverse_list_invalid() ->
             begin
                 Term =  {reverse, [1|L], lists:reverse(L)},
                 {ok, ERLOG} = erlog:new(),
-                case  erlog:prove(ERLOG,Term) of
+                case  erlog:prove(Term,ERLOG) of
                     {{succeed, _},_} ->
                         false;
                     {fail, _} ->
@@ -115,14 +115,12 @@ prop_member_list() ->
             begin
                 Term =  {C, M, L},
                 {ok, ERLOG} = erlog:new(),
-                case  erlog:prove(ERLOG,Term) of
+                case  erlog:prove(Term,ERLOG) of
                     {{succeed, _},_} ->
                         lists:member(M,L);
                     {fail, _} ->
                         not(lists:member(M,L))
-
                 end
-
             end).
 
 prop_sort_list1() ->
@@ -131,7 +129,7 @@ prop_sort_list1() ->
             begin
                 Term =  {sort, L, {'Sort'}},
                 {ok, ERLOG} = erlog:new(),
-                case  erlog:prove(ERLOG,Term) of
+                case  erlog:prove(Term,ERLOG) of
                     {{succeed, [{'Sort', Sort}]},_} ->
 			lists:usort(L) =:= Sort;
                     {fail, _} ->
@@ -145,7 +143,7 @@ prop_sort_list2() ->
             begin
                 Term =  {sort, L, lists:usort(L)},
                 {ok, ERLOG} = erlog:new(),
-                case  erlog:prove(ERLOG,Term) of
+                case  erlog:prove(Term,ERLOG) of
                     {{succeed, _},_} ->
 			true;
                     {fail, _} ->
@@ -158,9 +156,9 @@ prop_lists_length() ->
             list(int()),
             begin
                 {ok,E0}                         = erlog:new(),
-                {{succeed, _ }, _}              = erlog:prove(E0, {length, List, length(List)}),
-                {fail, _}                       = erlog:prove(E0, {length, List, length(List) + 1}),
-                {{succeed, [{length, Len}]},_}  = erlog:prove(E0, {length, List, {'length'}}),
+                {{succeed, _ }, _}              = erlog:prove({length, List, length(List)},E0),
+                {fail, _}                       = erlog:prove({length, List, length(List) + 1},E0),
+                {{succeed, [{length, Len}]},_}  = erlog:prove({length, List, {'length'}},E0),
                 ?assertEqual(Len, length(List)),
                 true
              end).
@@ -172,9 +170,9 @@ prop_split_with_append() ->
             ?FORALL(Pivot,choose(1, length(List)),
                     begin
                         {ok,E0}                 = erlog:new(),
-                        {ok,E1}                 = erlog:consult(E0, "../test/split.pl"),
+                        {ok,E1}                 = erlog:consult("../test/split.pl", E0),
 
-                        {{succeed, A }, _E2}    = erlog:prove(E1, {split, {'Head'}, {'Tail'}, Pivot, List}),
+                        {{succeed, A }, _E2}    = erlog:prove( {split, {'Head'},{'Tail'}, Pivot, List},E1),
                       
                         Head                    = proplists:get_value('Head',A ),
                         Tail                    = proplists:get_value('Tail',A ),

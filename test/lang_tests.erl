@@ -34,8 +34,8 @@ prop_lang_test_() ->
     PLFiles     = get_files(),
     {ok,PL} = erlog:new(),
     [begin
-	 {ok,PL1} = erlog:consult(PL,"../test/lang_tests/"++ File),
-	 ?_assertMatch({{succeed, _},_},  erlog:prove(PL1, {test,File}))
+	 {ok,PL1} = erlog:consult("../test/lang_tests/"++ File,PL),
+	 ?_assertMatch({{succeed, _},_},  erlog:prove({test,File},PL1))
      end || File <- PLFiles].
 
 

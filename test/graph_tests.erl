@@ -21,13 +21,13 @@
 
 partially_ordered_set_test() ->
     {ok, ERLOG}   =                                        erlog:new(),
-    {ok, ERLOG1 }         =                                erlog:consult(ERLOG, "../test/po_set.pl"),    
-    ?assertMatch({{succeed, []}, _},                       erlog:prove(ERLOG1, {connected, a, b})),
-    ?assertMatch({fail,_ },                                erlog:prove(ERLOG1, {connected, b,c})),
-    ?assertMatch({{succeed, []},_ },                       erlog:prove(ERLOG1, {ancestor, a, f})),
-    ?assertMatch({{succeed, [{'Ancestor', d}]},_},         erlog:prove(ERLOG1, {ancestor, {'Ancestor'}, f})),
+    {ok, ERLOG1 }         =                                erlog:consult( "../test/po_set.pl",ERLOG),    
+    ?assertMatch({{succeed, []}, _},                       erlog:prove({connected, a, b},ERLOG1)),
+    ?assertMatch({fail,_ },                                erlog:prove({connected, b,c},ERLOG1)),
+    ?assertMatch({{succeed, []},_ },                       erlog:prove({ancestor, a, f},ERLOG1)),
+    ?assertMatch({{succeed, [{'Ancestor', d}]},_},         erlog:prove({ancestor, {'Ancestor'}, f},ERLOG1 )),
  %   ?assertMatch({{succeed, [{'Ancestor', b}]},#est{}},   erlog:next_solution(ERLOG2)),
-    ?assertMatch({{succeed, [{'p', [a,b,f]}]}, _},         erlog:prove(ERLOG1,{path, a, f, {p}})),
+    ?assertMatch({{succeed, [{'p', [a,b,f]}]}, _},         erlog:prove({path, a, f, {p}},ERLOG1)),
 %    ?assertMatch({{succeed, [{'p', [a,c,d,f]}]}, #est{}}, erlog:next_solution(ERLOG3)),
     true.
 
@@ -43,17 +43,17 @@ prop_travel() ->
 	    {gnodes()},
 	    begin
 		{ok,E}   = erlog:new(),
-		{ok,E1}  = erlog:consult(E, "../test/graph.pl"),
+		{ok,E1}  = erlog:consult("../test/graph.pl",E),
 		E2  = lists:foldr(fun(Node, EI) ->
-					  {{succeed, _},E2} = erlog:prove(EI, {assertz,Node}),
+					  {{succeed, _},E2} = erlog:prove({assertz,Node},EI),
 					  E2
 				  end, E1,Nodes),
 		
 		true = lists:all(fun({edge,Start,_})->
-					 {{succeed, R},_}  = erlog:prove(E2, {path, Start, {'End'},{'Path'}}),
+					 {{succeed, R},_}  = erlog:prove( {path, Start,{'End'},{'Path'}},E2),
 					 End  = proplists:get_value('End',  R),
 					 Path = proplists:get_value('Path', R),
-					 {{succeed, []},_} = erlog:prove(E2, {path, Start, End, Path}),
+					 {{succeed, []},_} = erlog:prove({path, Start, End, Path},E2),
 					 true
 				 end, Nodes)
 	    end).

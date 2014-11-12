@@ -8,14 +8,14 @@
 make_erlog() ->
     application:set_env(erlog, consult_path, [".", "../stdlib"]),
     {ok, ERLOG}			= erlog:new(),
-    erlog:consult(ERLOG,"erlang.pl").
+    erlog:consult("erlang.pl",ERLOG).
 
 prop_send() ->
     ?FORALL(Msg,
 	    {word,non_empty(list(choose(65,90)))},
 	    begin
 		{ok, ERLOG1}                    = make_erlog(),
-		{{succeed, _R}, _ERLOG2}	= erlog:prove(ERLOG1, {send, self(), Msg}),
+		{{succeed, _R}, _ERLOG2}	= erlog:prove({send, self(), Msg},ERLOG1),
 		receive
 		    Msg ->
 			true
@@ -32,13 +32,13 @@ prop_recieve() ->
 		{ok, ERLOG1}                    = make_erlog(),
 		self() ! Msg,
 		
-		{{succeed, R}, _ERLOG2}	= erlog:prove(ERLOG1, {'receive', {'Msg'}, 500}),
+		{{succeed, R}, _ERLOG2}	= erlog:prove({'receive',{'Msg'}, 500},ERLOG1 ),
 		Msg =:= proplists:get_value('Msg', R)
 	    end).
 
 recieve_after_test() ->			     
     {ok, ERLOG1}                    = make_erlog(),
-    ?assertMatch({fail, _}, erlog:prove(ERLOG1, {'receive', {'Msg'}, 5})),
+    ?assertMatch({fail, _}, erlog:prove( {'receive', {'Msg'}, 5}, ERLOG1)),
     true.
 	    
 

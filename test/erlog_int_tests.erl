@@ -25,7 +25,7 @@ prop_equal() ->
 	    {int(),int()},
 	    begin
 		{ok,E}   = erlog:new(),
-	        case erlog:prove(E, {'==',I,J}) of
+	        case erlog:prove({'==',I,J},E) of
 		    {fail,_} ->
 			I =/= J;
 		    {{succeed,[]},_} ->
@@ -38,7 +38,7 @@ prop_not_equal() ->
 	    {int(),int(), oneof(['\\==','\\='])},
 	    begin
 		{ok,E}   = erlog:new(),
-	        case erlog:prove(E, {Op,I,J}) of
+	        case erlog:prove({Op,I,J},E) of
 		    {fail, _} ->
 			I == J;
 		    {{succeed,[]},_} ->
@@ -48,7 +48,7 @@ prop_not_equal() ->
 
 fail_test() ->
     {ok, ERLOG}   = erlog:new(),
-    {fail,_}      = erlog:prove(ERLOG, fail),
+    {fail,_}      = erlog:prove( fail,ERLOG),
     true.
 
 
@@ -77,9 +77,9 @@ keys() ->
 
 bool_test() ->
     {ok,E}            = erlog:new(),
-    {{succeed, []},_} =  erlog:prove(E, true),
+    {{succeed, []},_} =  erlog:prove(true,E),
 %    {fail,_}          =  erlog:prove(E, false),
-    {fail,_}          =  erlog:prove(E, fail),
+    {fail,_}          =  erlog:prove(fail,E),
     true.
 
 
@@ -95,8 +95,8 @@ prop_assert() ->
             {option(), value()},
             begin
                 {ok, ERLOG}   = erlog:new(),
-                {{succeed,_},ERLOG1} = erlog:prove(ERLOG, {Op, Value}),
-                case  erlog:prove(ERLOG1, Value) of
+                {{succeed,_},ERLOG1} = erlog:prove({Op, Value},ERLOG),
+                case  erlog:prove( Value,ERLOG1) of
                     {{succeed,_},_} -> true;
                     _           -> false
                 end
@@ -107,10 +107,10 @@ prop_retract() ->
             {oneof([retract]), value()},
             begin
                 {ok, ERLOG}		= erlog:new(),
-                {{succeed,_},ERLOG1}	= erlog:prove(ERLOG, {asserta, Value}),
-                {{succeed,_}, ERLOG2}	= erlog:prove(ERLOG1, Value),
-                {{succeed,_}, ERLOG3}	= erlog:prove(ERLOG2, {Op, Value}),
-                case  erlog:prove(ERLOG3, Value) of
+                {{succeed,_},ERLOG1}	= erlog:prove({asserta, Value},ERLOG),
+                {{succeed,_}, ERLOG2}	= erlog:prove( Value,ERLOG1),
+                {{succeed,_}, ERLOG3}	= erlog:prove({Op, Value},ERLOG2),
+                case  erlog:prove(Value,ERLOG3) of
                     {{succeed,_},_}  -> false;
                     {fail, _}        -> true
                 end

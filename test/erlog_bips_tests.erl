@@ -67,7 +67,7 @@ prop_atom() ->
 	    oneof([int(),atom()]),
 	    begin
 		{ok,Erlog}    = erlog:new(),
-                case {erlog:prove(Erlog, {atom,  MaybeAtom}), is_atom(MaybeAtom)} of
+                case {erlog:prove( {atom,  MaybeAtom},Erlog), is_atom(MaybeAtom)} of
 		    {{{succeed,_},_}, true} -> true;
 		    {{fail,_}, false} -> true;
 		    _  -> false
@@ -80,7 +80,7 @@ prop_is_integer() ->
 	    oneof([int(),atom(), real()]),
 	    begin
 		{ok,Erlog}    = erlog:new(),
-                case {erlog:prove(Erlog, {integer,  MaybeInt}), is_integer(MaybeInt)} of
+                case {erlog:prove( {integer,  MaybeInt},Erlog), is_integer(MaybeInt)} of
 		    {{{succeed,_},_}, true} -> true;
 		    {{fail,_}, false} -> true;
 		    _  -> false
@@ -93,8 +93,8 @@ prop_atomic_and_compound() ->
 	    oneof([int(),atom(),real(),binary(),non_empty(list(int())),{atom(), int()}]),
 	    begin
 		{ok,Erlog}    = erlog:new(),
-                case {erlog:prove(Erlog, {atomic,  Atom}),
-		      erlog:prove(Erlog, {compound,Atom})}
+                case {erlog:prove( {atomic,  Atom}, Erlog),
+		      erlog:prove( {compound,Atom},Erlog)}
 		      of
 		    {{{succeed,_},_},{fail,_}} ->
 			is_atomic(Atom);
@@ -109,7 +109,7 @@ prop_comp() ->
 	    {oneof([int(),real()]), int(), cops()},
 	    begin
                 {ok, ERLOG}    = erlog:new(),
-                case erlog:prove(ERLOG, {Op, I, J}) of
+                case erlog:prove({Op, I, J},ERLOG ) of
 		    {{succeed, _},_ } -> 
 			C(I,J);
 		    {fail, _} ->
@@ -124,9 +124,9 @@ prop_equals() ->
     ?FORALL(I, any(),
             begin
                 {ok,Erlog}    = erlog:new(),
-		?assertMatch({{succeed, [{'X',I}]},_}, erlog:prove(Erlog, {'=', I,     {'X'}})),
-		?assertMatch({{succeed, [{'X',I}]},_}, erlog:prove(Erlog, {'=', {'X'}, I})),
-                ?assertMatch({{succeed, []},_},        erlog:prove(Erlog, {'=', I,     I})),
+		?assertMatch({{succeed, [{'X',I}]},_}, erlog:prove({'=', I,     {'X'}},Erlog)),
+		?assertMatch({{succeed, [{'X',I}]},_}, erlog:prove({'=', {'X'}, I},Erlog)),
+                ?assertMatch({{succeed, []},_},        erlog:prove({'=', I,     I},Erlog)),
 		true
             end).
 prop_not_equals() ->
@@ -134,7 +134,7 @@ prop_not_equals() ->
 	    ?IMPLIES(I /= J,
             begin
                 {ok,Erlog}    = erlog:new(),
-                ?assertMatch({fail,_}, erlog:prove(Erlog, {'=', I, J})),
+                ?assertMatch({fail,_}, erlog:prove({'=', I, J},Erlog)),
 		true
             end)).
 
@@ -142,7 +142,7 @@ prop_float()->
     ?FORALL(I,real(),
             begin
                 {ok, ERLOG}    = erlog:new(),
-                {{succeed, _},_} = erlog:prove(ERLOG, {float, I}),
+                {{succeed, _},_} = erlog:prove( {float, I},ERLOG),
                 true
             end).
 
@@ -150,14 +150,14 @@ prop_integer()->
     ?FORALL(I,int(),
             begin
                 {ok, ERLOG}    = erlog:new(),
-                {{succeed, _},_} = erlog:prove(ERLOG, {integer, I}),
+                {{succeed, _},_} = erlog:prove({integer, I},ERLOG),
                 true
             end).
 prop_number()->
     ?FORALL(I,oneof([int(),real()]),
             begin
                 {ok, ERLOG}    = erlog:new(),
-                {{succeed, _},_} = erlog:prove(ERLOG, {number, I}),
+                {{succeed, _},_} = erlog:prove({number, I},ERLOG),
                 true
             end).
 
@@ -171,7 +171,7 @@ prop_arg() ->
 			{ok,Erlog} = erlog:new(),
 			P  = list_to_tuple([tuple|T]),
 
-			{{succeed, [{'El',El}]},_} = erlog:prove(Erlog, {arg, Place, P, {'El'}}),
+			{{succeed, [{'El',El}]},_} = erlog:prove({arg, Place, P, {'El'}},Erlog),
 			?assertEqual(element(Place + 1, P), El),
 			true
 
@@ -180,8 +180,8 @@ prop_arg() ->
 
 clause_test() ->
     {ok,E}		= erlog:new(),
-    {ok, E1}            = erlog:consult(E,"../stdlib/erlang.pl"),
-    {{succeed, A1},E2}	= erlog:prove(E1, {clause, {record, {'X'},{'Y'}}, {'Z'}}),
+    {ok, Erlog}            = erlog:consult("../stdlib/erlang.pl",E),
+    {{succeed, A1},_E2}	= erlog:prove( {clause, {record, {'X'},{'Y'}}, {'Z'}}, Erlog),
   %  {{succeed, _A2},_}   = erlog:next_solution(E2),
     ?assertEqual(3,length(A1)),
  %   ?assertEqual(3,length(A2)),

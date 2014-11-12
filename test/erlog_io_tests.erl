@@ -27,7 +27,7 @@ prop_display_1() ->
 		{ok, Erlog} = erlog:new(),
 		Pid = spawn_link(fun() ->
 					 erlang:group_leader(Leader, self()),
-					 erlog:prove(Erlog,{display, Value}),
+					 erlog:prove({display, Value},Erlog),
 					 ok
 				 end),
 		receive
@@ -42,7 +42,7 @@ nl_test() ->
     {ok, Erlog} = erlog:new(),
     Pid = spawn_link(fun() ->
 			     erlang:group_leader(Leader, self()),
-			     erlog:prove(Erlog, nl),
+			     erlog:prove( nl, Erlog),
 			     ok
 		     end),
     receive
@@ -65,7 +65,7 @@ prop_display_2() ->
 		{ok, Erlog} = erlog:new(),
 		Pid = spawn_link(fun() ->
 					 erlang:group_leader(Leader, self()),
-					 erlog:prove(Erlog,{display, Format,Value}),
+					 erlog:prove({display, Format,Value},Erlog),
 					 ok
 				 end),
 		receive
